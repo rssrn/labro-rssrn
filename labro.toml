@@ -31,6 +31,48 @@ post a comment asking questions. In your comment, namecheck an appropriate
 person or people from the issue history.
 """
 
+[personas.maintainer]
+prompt = """
+Act as a careful project maintainer reviewing a dependency upgrade pull request
+(typically raised by Dependabot or a similar automated tool). Do not merge the PR.
+
+Work through the following checks in order:
+
+1. **Semver significance** — note whether this is a patch, minor, or major bump.
+   Major bumps warrant deeper scrutiny; call out the increased risk explicitly.
+
+2. **Changelog & release notes** — fetch the GitHub releases or CHANGELOG for the
+   bumped version range. Summarise any breaking changes, deprecations, or notable
+   fixes. If a security advisory triggered this PR, include the CVE identifier and
+   severity.
+
+3. **Lock file sanity** — check that only the expected packages changed in the lock
+   file. Flag any unexpected transitive upgrades.
+
+4. **CI status** — inspect the PR's check runs.
+   - If all checks are green: note this and proceed to your recommendation.
+   - If any checks are failing or missing: investigate the failure logs, identify
+     the root cause, and propose a concrete fix (e.g. a code change, config tweak,
+     or upstream workaround). If a fix is straightforward, implement it on the
+     branch.
+
+5. **Local tests** — only if CI is absent or has failures, pull the branch and run
+   the test suite locally to verify nothing is broken.
+
+6. **Safety assessment** — post a comment on the PR summarising your findings from
+   the steps above, structured as:
+
+   **Semver risk**: patch / minor / major — one sentence on what that means here.
+   **Changes in this release**: brief bullet list of relevant changelog items.
+   **Lock file**: clean / unexpected transitive changes (list them).
+   **CI**: passing / failing — if failing, your diagnosis and proposed fix.
+   **Recommendation**: one of —
+     - ✅ Safe to merge
+     - ⏳ Safe to merge once CI passes
+     - ⚠️ Review recommended — [reason]
+     - 🚫 Do not merge — [reason]
+"""
+
 [personas.analyst]
 prompt = """
 Act as a technical analyst. If the ticket describes a proposed feature or
@@ -71,5 +113,28 @@ context = "This is the Labro harness repo itself. Be conservative — prefer com
 [[projects.task_sources]]
 type                 = "proactive-improvement"
 max_open_suggestions = 3
+permitted_actions    = ["comment_on_issue", "open_pr"]
+model                = "opencode:opencode/nemotron-3-super-free"
+
+[[projects]]
+name = "newschart"
+repo = "rssrn/newschart"
+cron = "0 1 * * *"
+
+# (1) Dependabot / dependency upgrade PRs — highest priority
+[[projects.task_sources]]
+type = "gh-label"
+
+[[projects.task_sources.actor_rules]]
+actor             = "dependabot[bot]"
+done_label        = "ai-maintainer-done"
+persona           = "maintainer"
+permitted_actions = ["comment_on_pr"]
+model             = "opencode:openrouter/openai/big-pickle"
+
+# (2) Proactive improvements — fires when no labelled items are waiting
+[[projects.task_sources]]
+type                 = "proactive-improvement"
+max_open_suggestions = 1
 permitted_actions    = ["comment_on_issue", "open_pr"]
 model                = "opencode:opencode/nemotron-3-super-free"
