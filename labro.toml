@@ -130,7 +130,7 @@ actor             = "dependabot[bot]"
 done_label        = "ai-maintainer-done"
 persona           = "maintainer"
 permitted_actions = ["comment_on_pr"]
-model             = "opencode:openrouter/openai/big-pickle"
+model             = "opencode:opencode/big-pickle"
 
 # (2) Proactive improvements — fires when no labelled items are waiting
 [[projects.task_sources]]
