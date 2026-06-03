@@ -89,12 +89,14 @@ jobs:
             echo "Pulling $IMAGE..."
             docker pull "$IMAGE"
 
-            echo "Draining in-flight runs..."
-            docker exec labro touch /data/LABRO_DISABLED 2>/dev/null || true
-            while [ "$(docker exec labro sqlite3 /data/labro.db \
-                'SELECT COUNT(*) FROM project_locks' 2>/dev/null || echo 0)" != "0" ]; do
-              echo "waiting..."; sleep 5
-            done
+            if [ "$(docker inspect -f '{{.State.Running}}' labro 2>/dev/null || echo 'false')" = "true" ]; then
+              echo "Draining in-flight runs..."
+              docker exec labro touch /data/LABRO_DISABLED 2>/dev/null || true
+              while [ "$(docker exec labro sqlite3 /data/labro.db \
+                  'SELECT COUNT(*) FROM project_locks' 2>/dev/null || echo 0)" != "0" ]; do
+                echo "waiting..."; sleep 5
+              done
+            fi
 
             echo "Replacing container..."
             docker stop labro 2>/dev/null || true
