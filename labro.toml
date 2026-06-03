@@ -1,0 +1,75 @@
+# labro.toml — operator config for rssrn/labro-rssrn
+#
+# Labro secrets live in /opt/labro/.env on the OCI host (not here):
+#   LABRO_CONFIG=/config/labro.toml
+#   GITHUB_APP_PRIVATE_KEY_BASE64=<base64 -w 0 labro-bot.pem>
+#   CLAUDE_CODE_OAUTH_TOKEN=<token from `claude setup-token`>
+#
+# The .env is bind-mounted at container start; GitHub Actions workflows
+# (labro-deploy.yml, labro-update.yml) only need OCI_SSH_KEY / OCI_HOST / OCI_USER.
+#
+# See: https://github.com/rssrn/labro for the harness source and docs.
+
+github_app_id   = 3933219
+github_app_name = "labro-bot"
+
+[digest]
+enabled = false
+
+[defaults]
+model         = "opencode:openrouter/openai/gpt-oss-120b:free"
+max_turns    = 10
+timeout_s    = 600
+
+# ── Personas ───────────────────────────────────────────────────────────────────
+
+[personas.senior-developer]
+prompt = """
+Act as a senior developer. If reasonably possible, raise a PR for this ticket.
+If a PR is not reasonably possible (e.g. unclear or contradictory requirements),
+post a comment asking questions. In your comment, namecheck an appropriate
+person or people from the issue history.
+"""
+
+[personas.analyst]
+prompt = """
+Act as a technical analyst. If the ticket describes a proposed feature or
+change, evaluate its feasibility, risks, and fit with the existing architecture.
+Post a comment structured as a short proposal with these sections:
+
+**Summary** — one paragraph restating the proposal in your own words.
+**Risks & concerns** — bullet list of technical or process risks.
+**Open questions** — anything that needs clarification before work can start.
+**Recommended approach** — your suggested next step (implement as-is, spike
+first, reject, needs more detail, etc.) with a brief rationale.
+
+Do not implement changes.
+"""
+
+# ── Shared rules ───────────────────────────────────────────────────────────────
+
+[shared_rules.dev]
+label             = "ai-dev"
+done_label        = "ai-dev-done"
+persona           = "senior-developer"
+permitted_actions = ["comment_on_issue", "open_pr"]
+
+[shared_rules.analyst]
+label             = "ai-analyst"
+done_label        = "ai-analyst-done"
+persona           = "analyst"
+permitted_actions = ["comment_on_issue"]
+
+# ── Projects ───────────────────────────────────────────────────────────────────
+
+[[projects]]
+name    = "labro"
+repo    = "rssrn/labro"
+cron    = "*/30 * * * *"
+context = "This is the Labro harness repo itself. Be conservative — prefer comments over opening PRs unless the fix is straightforward."
+
+[[projects.task_sources]]
+type                 = "proactive-improvement"
+max_open_suggestions = 3
+permitted_actions    = ["comment_on_issue", "open_pr"]
+model                = "opencode:opencode/nemotron-3-super-free"

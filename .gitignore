@@ -1,0 +1,9 @@
+# Local secrets — never commit
+.env
+*.pem
+*.key
+
+# Editor artefacts
+*~
+*.swp
+.DS_Store
