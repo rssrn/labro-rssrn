@@ -26,6 +26,7 @@ on:
   push:
     paths:
       - 'labro.toml'
+  workflow_dispatch:
 
 jobs:
   deploy:
