@@ -97,8 +97,8 @@ jobs:
             done
 
             echo "Replacing container..."
-            docker stop labro
-            docker rm labro
+            docker stop labro 2>/dev/null || true
+            docker rm labro 2>/dev/null || true
 
             docker run -d \
               --name labro \

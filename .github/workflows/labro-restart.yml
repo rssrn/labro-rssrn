@@ -70,14 +70,14 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
             ${{ secrets.DEPLOY_HOST }} '
-            IMAGE=$(docker inspect labro --format="{{.Config.Image}}")
+            IMAGE=$(docker inspect labro --format="{{.Config.Image}}" 2>/dev/null || echo "ghcr.io/rssrn/labro:latest")
             docker exec labro touch /data/LABRO_DISABLED 2>/dev/null || true
             while [ "$(docker exec labro sqlite3 /data/labro.db \
                 "SELECT COUNT(*) FROM project_locks" 2>/dev/null || echo 0)" != "0" ]; do
               echo "waiting for in-flight runs..."; sleep 5
             done
-            docker stop labro
-            docker rm labro
+            docker stop labro 2>/dev/null || true
+            docker rm labro 2>/dev/null || true
             docker run -d \
               --name labro \
               --restart unless-stopped \
