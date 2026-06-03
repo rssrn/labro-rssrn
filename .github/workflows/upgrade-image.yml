@@ -1,14 +1,15 @@
-# .github/workflows/labro-deploy.yml
-# Triggered when labro.toml changes. Writes secrets to the OCI host, copies the
-# updated config, and recreates the container so all changes take effect.
+# .github/workflows/upgrade-image.yml
+# Pulls the latest labro image, refreshes secrets, and recreates the container.
+# Triggered automatically via repository_dispatch (labro-release) when a new image is published
+# by rssrn/labro, or run manually via Actions → Run workflow.
 #
 # Host layout (all persistent state under /opt/labro/data, mounted to /data):
 #   /opt/labro/.env                  — secrets (outside mount; read by docker at run time)
-#   /opt/labro/data/labro.toml       — config (scp'd here by this workflow)
+#   /opt/labro/data/labro.toml       — config
 #   /opt/labro/data/labro.db         — SQLite
 #   /opt/labro/data/labro.log        — run log
 #   /opt/labro/data/repos/           — cloned repos
-#   /opt/labro/data/codex/auth.json  — codex CLI auth (scp'd here; symlinked to ~/.codex/auth.json)
+#   /opt/labro/data/codex/auth.json  — codex CLI auth (symlinked to ~/.codex/auth.json)
 #
 # Required repo secrets:
 #   TAILSCALE_AUTHKEY              — ephemeral auth key from Tailscale admin (Actions → Keys)
@@ -23,17 +24,14 @@
 #                                    (base64 -w 0 ~/.codex/auth.json)
 #                                    bind-mounted so headless token refresh persists
 on:
-  push:
-    paths:
-      - 'labro.toml'
   workflow_dispatch:
+  repository_dispatch:
+    types: [labro-release]
 
 jobs:
-  deploy:
+  upgrade-image:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
       - name: Connect to Tailscale
         uses: tailscale/github-action@v4
         with:
@@ -72,37 +70,42 @@ jobs:
               ${{ secrets.DEPLOY_HOST }} 'chmod 600 /opt/labro/data/codex/auth.json'
           fi
 
-      - name: Copy config and env file to host
+      - name: Copy env file to host
         run: |
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
             ${{ secrets.DEPLOY_HOST }} 'mkdir -p /opt/labro/data'
-          scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-            labro.toml ${{ secrets.DEPLOY_HOST }}:/opt/labro/data/labro.toml
           scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
             /tmp/labro.env ${{ secrets.DEPLOY_HOST }}:/opt/labro/.env
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
             ${{ secrets.DEPLOY_HOST }} 'chmod 600 /opt/labro/.env'
 
-      - name: Recreate container
+      - name: Pull latest image and replace container
         run: |
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-            ${{ secrets.DEPLOY_HOST }} '
-            IMAGE=ghcr.io/rssrn/labro:latest
-            if docker inspect labro >/dev/null 2>&1; then
-              IMAGE=$(docker inspect labro --format="{{.Config.Image}}")
-              docker exec labro touch /data/LABRO_DISABLED 2>/dev/null || true
-              while [ "$(docker exec labro sqlite3 /data/labro.db \
-                  "SELECT COUNT(*) FROM project_locks" 2>/dev/null)" != "0" ]; do
-                echo "waiting for in-flight runs..."; sleep 5
-              done
-              docker stop labro
-              docker rm labro
-            fi
+            ${{ secrets.DEPLOY_HOST }} << 'ENDSSH'
+            set -euo pipefail
+            IMAGE="ghcr.io/rssrn/labro:latest"
+
+            echo "Pulling $IMAGE..."
             docker pull "$IMAGE"
+
+            echo "Draining in-flight runs..."
+            docker exec labro touch /data/LABRO_DISABLED 2>/dev/null || true
+            while [ "$(docker exec labro sqlite3 /data/labro.db \
+                'SELECT COUNT(*) FROM project_locks' 2>/dev/null)" != "0" ]; do
+              echo "waiting..."; sleep 5
+            done
+
+            echo "Replacing container..."
+            docker stop labro
+            docker rm labro
+
             docker run -d \
               --name labro \
               --restart unless-stopped \
               --env-file /opt/labro/.env \
               -v /opt/labro/data:/data \
               "$IMAGE"
-          '
+
+            echo "Done. labro is running $IMAGE"
+          ENDSSH

@@ -1,6 +1,6 @@
 # .github/workflows/labro-restart.yml
-# Refreshes secrets and restarts the container. Use after rotating any API key,
-# or to recover from a hung state.
+# Refreshes secrets and restarts the container with the existing image (no pull, no config copy).
+# Use after rotating an API key, or to recover from a hung state.
 #
 # Required repo secrets:
 #   TAILSCALE_AUTHKEY              — ephemeral auth key from Tailscale admin (Actions → Keys)

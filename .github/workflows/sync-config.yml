@@ -1,0 +1,38 @@
+# .github/workflows/sync-config.yml
+# Triggered when labro.toml changes. Copies the updated config to the host.
+# No restart needed — labro reads config fresh on each cron-triggered run.
+# To upgrade the image, run upgrade-image.yml instead.
+#
+# Host layout (all persistent state under /opt/labro/data, mounted to /data):
+#   /opt/labro/data/labro.toml       — config (scp'd here by this workflow)
+#   /opt/labro/data/labro.db         — SQLite
+#   /opt/labro/data/labro.log        — run log
+#   /opt/labro/data/repos/           — cloned repos
+#
+# Required repo secrets:
+#   TAILSCALE_AUTHKEY              — ephemeral auth key from Tailscale admin (Actions → Keys)
+#   DEPLOY_HOST                    — user@hostname (Tailscale hostname), e.g. ubuntu@my-oci-vm
+on:
+  push:
+    paths:
+      - 'labro.toml'
+  workflow_dispatch:
+
+jobs:
+  sync-config:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v4
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+          args: --advertise-tags=tag:github-runner
+
+      - name: Copy config to host
+        run: |
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            ${{ secrets.DEPLOY_HOST }} 'mkdir -p /opt/labro/data'
+          scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            labro.toml ${{ secrets.DEPLOY_HOST }}:/opt/labro/data/labro.toml
