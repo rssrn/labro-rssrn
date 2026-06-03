@@ -1,6 +1,6 @@
 # .github/workflows/labro-update.yml
 # Pulls the latest labro image and recreates the container with fresh secrets.
-# Run manually via Actions → Run workflow after pushing a new labro release tag.
+# Run manually via Actions → Run workflow, or automatically on labro-release dispatch from rssrn/labro.
 #
 # Host layout (all persistent state under /opt/labro/data, mounted to /data):
 #   /opt/labro/.env                  — secrets (outside mount; read by docker at run time)
@@ -24,6 +24,8 @@
 #                                    bind-mounted so headless token refresh persists
 on:
   workflow_dispatch:
+  repository_dispatch:
+    types: [labro-release]
 
 jobs:
   update:
