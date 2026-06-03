@@ -101,6 +101,7 @@ jobs:
             echo "Replacing container..."
             docker stop labro 2>/dev/null || true
             docker rm labro 2>/dev/null || true
+            rm -f /opt/labro/data/LABRO_DISABLED
 
             docker run -d \
               --name labro \
