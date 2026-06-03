@@ -2,7 +2,7 @@
 #
 # Labro secrets live in /opt/labro/.env on the OCI host (not here):
 #   LABRO_CONFIG=/config/labro.toml
-#   GITHUB_APP_PRIVATE_KEY_BASE64=<base64 -w 0 labro-bot.pem>
+#   GH_APP_PRIVATE_KEY_BASE64=<base64 -w 0 labro-bot.pem>
 #   CLAUDE_CODE_OAUTH_TOKEN=<token from `claude setup-token`>
 #
 # The .env is bind-mounted at container start; GitHub Actions workflows

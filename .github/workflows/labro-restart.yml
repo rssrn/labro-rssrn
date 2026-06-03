@@ -5,7 +5,7 @@
 # Required repo secrets:
 #   TAILSCALE_AUTHKEY              — ephemeral auth key from Tailscale admin (Actions → Keys)
 #   DEPLOY_HOST                    — user@hostname (Tailscale hostname), e.g. ubuntu@my-oci-vm
-#   GITHUB_APP_PRIVATE_KEY_BASE64  — base64 -w 0 labro-bot.pem
+#   GH_APP_PRIVATE_KEY_BASE64  — base64 -w 0 labro-bot.pem
 #
 # Optional repo secrets (include whichever agents you use):
 #   CLAUDE_CODE_OAUTH_TOKEN        — from: claude setup-token
@@ -29,7 +29,7 @@ jobs:
 
       - name: Write env file
         env:
-          GITHUB_APP_PRIVATE_KEY_BASE64: ${{ secrets.GITHUB_APP_PRIVATE_KEY_BASE64 }}
+          GH_APP_PRIVATE_KEY_BASE64: ${{ secrets.GH_APP_PRIVATE_KEY_BASE64 }}
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           CODEX_API_KEY: ${{ secrets.CODEX_API_KEY }}
@@ -37,7 +37,7 @@ jobs:
           {
             printf 'LABRO_CONFIG=/data/labro.toml\n'
             printf 'LABRO_REPOS_DIR=/data/repos\n'
-            printf 'GITHUB_APP_PRIVATE_KEY_BASE64=%s\n' "$GITHUB_APP_PRIVATE_KEY_BASE64"
+            printf 'GH_APP_PRIVATE_KEY_BASE64=%s\n' "$GH_APP_PRIVATE_KEY_BASE64"
             [ -n "$CLAUDE_CODE_OAUTH_TOKEN" ] && printf 'CLAUDE_CODE_OAUTH_TOKEN=%s\n' "$CLAUDE_CODE_OAUTH_TOKEN"
             [ -n "$OPENROUTER_API_KEY" ]      && printf 'OPENROUTER_API_KEY=%s\n'      "$OPENROUTER_API_KEY"
             [ -n "$CODEX_API_KEY" ]           && printf 'CODEX_API_KEY=%s\n'           "$CODEX_API_KEY"
