@@ -25,6 +25,7 @@ jobs:
         with:
           repository: rssrn/labro
           ref: ${{ github.event.client_payload.ref || 'main' }}
+          token: ${{ secrets.LABRO_READ_TOKEN }}
 
       - name: Set up Node
         uses: actions/setup-node@v4
