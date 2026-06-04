@@ -107,7 +107,7 @@ permitted_actions = ["comment_on_issue"]
 [[projects]]
 name    = "labro"
 repo    = "rssrn/labro"
-cron    = "*/30 * * * *"
+cron    = "0 3,5 * * *"
 context = "This is the Labro harness repo itself. Be conservative — prefer comments over opening PRs unless the fix is straightforward."
 
 [[projects.task_sources]]
