@@ -44,6 +44,9 @@ jobs:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           CODEX_API_KEY: ${{ secrets.CODEX_API_KEY }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
         run: |
           {
             printf 'LABRO_CONFIG=/data/labro.toml\n'
@@ -52,6 +55,9 @@ jobs:
             [ -n "$CLAUDE_CODE_OAUTH_TOKEN" ] && printf 'CLAUDE_CODE_OAUTH_TOKEN=%s\n' "$CLAUDE_CODE_OAUTH_TOKEN"
             [ -n "$OPENROUTER_API_KEY" ]      && printf 'OPENROUTER_API_KEY=%s\n'      "$OPENROUTER_API_KEY"
             [ -n "$CODEX_API_KEY" ]           && printf 'CODEX_API_KEY=%s\n'           "$CODEX_API_KEY"
+            [ -n "$R2_ACCESS_KEY_ID" ]        && printf 'R2_ACCESS_KEY_ID=%s\n'        "$R2_ACCESS_KEY_ID"
+            [ -n "$R2_SECRET_ACCESS_KEY" ]    && printf 'R2_SECRET_ACCESS_KEY=%s\n'    "$R2_SECRET_ACCESS_KEY"
+            [ -n "$R2_ACCOUNT_ID" ]           && printf 'R2_ACCOUNT_ID=%s\n'           "$R2_ACCOUNT_ID"
           } > /tmp/labro.env
           chmod 600 /tmp/labro.env
 
