@@ -15,7 +15,6 @@ github_app_name = "labro-bot"
 
 [dashboard]
 enabled = true
-bucket  = "labro-rssrn-metrics"
 cron    = "17 * * * *"
 
 

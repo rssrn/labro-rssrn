@@ -1,0 +1,55 @@
+# .github/workflows/dashboard-publish.yml
+# Builds the Labro dashboard SPA and uploads it to R2.
+# Triggered by repository_dispatch (dashboard-publish) from rssrn/labro on pushes
+# that touch dashboard/, or run manually.
+#
+# Required repo secrets:
+#   R2_ACCESS_KEY_ID      — Cloudflare R2 API token key ID
+#   R2_SECRET_ACCESS_KEY  — Cloudflare R2 API token secret
+#   R2_ACCOUNT_ID         — Cloudflare account ID
+#   R2_BUCKET             — R2 bucket name (e.g. labro-rssrn-metrics)
+#
+# IMPORTANT: uses --no-delete so that /db/ objects and manifest.json
+# (written only by `labro publish-db` on the VPS) are never wiped.
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [dashboard-publish]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout labro at dispatched ref
+        uses: actions/checkout@v4
+        with:
+          repository: rssrn/labro
+          ref: ${{ github.event.client_payload.ref || 'main' }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: dashboard/package-lock.json
+
+      - name: Install dependencies
+        working-directory: dashboard
+        run: npm ci
+
+      - name: Build SPA
+        working-directory: dashboard
+        run: npm run build
+
+      - name: Upload to R2
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          pip install awscli --quiet
+          aws s3 sync dashboard/dist/ "s3://$R2_BUCKET/" \
+            --endpoint-url "https://$R2_ACCOUNT_ID.r2.cloudflarestorage.com" \
+            --cache-control "public, max-age=300" \
+            --no-delete
