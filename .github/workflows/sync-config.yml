@@ -36,3 +36,9 @@ jobs:
             ${{ secrets.DEPLOY_HOST }} 'mkdir -p /opt/labro/data'
           scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
             labro.toml ${{ secrets.DEPLOY_HOST }}:/opt/labro/data/labro.toml
+
+      - name: Rebuild crontab in container
+        run: |
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            ${{ secrets.DEPLOY_HOST }} \
+            'docker exec labro sh -c "labro gen-crontab > /etc/cron.d/labro && chmod 644 /etc/cron.d/labro"'
