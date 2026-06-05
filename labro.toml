@@ -120,7 +120,8 @@ context = "This is the Labro harness repo itself. Be conservative — prefer com
 type = "gh-label"
 
 [[projects.task_sources.label_rules]]
-rule = "dev"
+rule  = "dev"
+model = "opencode:opencode/big-pickle"
 
 # (2) Analyst label
 [[projects.task_sources]]
