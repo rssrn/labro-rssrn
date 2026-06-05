@@ -115,6 +115,21 @@ repo    = "rssrn/labro"
 cron    = "0 */3 * * *"
 context = "This is the Labro harness repo itself. Be conservative — prefer comments over opening PRs unless the fix is straightforward."
 
+# (1) Dev label — highest priority
+[[projects.task_sources]]
+type = "gh-label"
+
+[[projects.task_sources.label_rules]]
+rule = "dev"
+
+# (2) Analyst label
+[[projects.task_sources]]
+type = "gh-label"
+
+[[projects.task_sources.label_rules]]
+rule = "analyst"
+
+# (3) Proactive improvement — fallback when nothing labelled
 [[projects.task_sources]]
 type                 = "proactive-improvement"
 max_open_suggestions = 3
