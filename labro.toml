@@ -120,12 +120,12 @@ context = "This is the Labro harness repo itself. Be conservative — prefer com
 type = "gh-author"
 
 [[projects.task_sources.author_rules]]
-actor             = "dependabot[bot]"
-done_label        = "ai-maintainer-done"
-persona           = "maintainer"
-required_labels   = ["security"]
-permitted_actions = ["comment_on_pr"]
-model             = "opencode:opencode/big-pickle"
+actor                     = "dependabot[bot]"
+done_label                = "ai-maintainer-done"
+persona                   = "maintainer"
+requires_dependabot_alert = true
+permitted_actions         = ["comment_on_pr"]
+model                     = "opencode:opencode/big-pickle"
 
 # (2) Dev label
 [[projects.task_sources]]
@@ -170,12 +170,12 @@ cron = "0 1 * * *"
 type = "gh-author"
 
 [[projects.task_sources.author_rules]]
-actor             = "dependabot[bot]"
-done_label        = "ai-maintainer-done"
-persona           = "maintainer"
-required_labels   = ["security"]
-permitted_actions = ["comment_on_pr"]
-model             = "opencode:opencode/big-pickle"
+actor                     = "dependabot[bot]"
+done_label                = "ai-maintainer-done"
+persona                   = "maintainer"
+requires_dependabot_alert = true
+permitted_actions         = ["comment_on_pr"]
+model                     = "opencode:opencode/big-pickle"
 
 # (2) Dependabot routine bumps — only when no security PRs are waiting
 [[projects.task_sources]]
