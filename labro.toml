@@ -115,7 +115,19 @@ repo    = "rssrn/labro"
 cron    = "0 */3 * * *"
 context = "This is the Labro harness repo itself. Be conservative — prefer comments over opening PRs unless the fix is straightforward."
 
-# (1) Dev label — highest priority
+# (1) Dependabot security — highest priority
+[[projects.task_sources]]
+type = "gh-author"
+
+[[projects.task_sources.author_rules]]
+actor             = "dependabot[bot]"
+done_label        = "ai-maintainer-done"
+persona           = "maintainer"
+required_labels   = ["security"]
+permitted_actions = ["comment_on_pr"]
+model             = "opencode:opencode/big-pickle"
+
+# (2) Dev label
 [[projects.task_sources]]
 type = "gh-label"
 
@@ -123,14 +135,25 @@ type = "gh-label"
 rule  = "dev"
 model = "opencode:opencode/big-pickle"
 
-# (2) Analyst label
+# (3) Analyst label
 [[projects.task_sources]]
 type = "gh-label"
 
 [[projects.task_sources.label_rules]]
 rule = "analyst"
 
-# (3) Proactive improvement — fallback when nothing labelled
+# (4) Dependabot routine bumps — only when nothing above is waiting
+[[projects.task_sources]]
+type = "gh-author"
+
+[[projects.task_sources.author_rules]]
+actor             = "dependabot[bot]"
+done_label        = "ai-maintainer-done"
+persona           = "maintainer"
+permitted_actions = ["comment_on_pr"]
+model             = "opencode:opencode/big-pickle"
+
+# (5) Proactive improvement — fallback when nothing labelled
 [[projects.task_sources]]
 type                 = "proactive-improvement"
 max_open_suggestions = 3
@@ -142,7 +165,19 @@ name = "newschart"
 repo = "rssrn/newschart"
 cron = "0 1 * * *"
 
-# (1) Dependabot / dependency upgrade PRs — highest priority
+# (1) Dependabot security PRs — highest priority
+[[projects.task_sources]]
+type = "gh-author"
+
+[[projects.task_sources.author_rules]]
+actor             = "dependabot[bot]"
+done_label        = "ai-maintainer-done"
+persona           = "maintainer"
+required_labels   = ["security"]
+permitted_actions = ["comment_on_pr"]
+model             = "opencode:opencode/big-pickle"
+
+# (2) Dependabot routine bumps — only when no security PRs are waiting
 [[projects.task_sources]]
 type = "gh-author"
 
@@ -153,7 +188,7 @@ persona           = "maintainer"
 permitted_actions = ["comment_on_pr"]
 model             = "opencode:opencode/big-pickle"
 
-# (2) Proactive improvements — fires when no labelled items are waiting
+# (3) Proactive improvements — fires when nothing else is waiting
 [[projects.task_sources]]
 type                 = "proactive-improvement"
 max_open_suggestions = 1
