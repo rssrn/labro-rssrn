@@ -128,9 +128,9 @@ cron = "0 1 * * *"
 
 # (1) Dependabot / dependency upgrade PRs — highest priority
 [[projects.task_sources]]
-type = "gh-label"
+type = "gh-author"
 
-[[projects.task_sources.actor_rules]]
+[[projects.task_sources.author_rules]]
 actor             = "dependabot[bot]"
 done_label        = "ai-maintainer-done"
 persona           = "maintainer"
