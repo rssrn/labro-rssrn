@@ -22,8 +22,8 @@ cron    = "17 * * * *"
 enabled = false
 
 [defaults]
-model         = "opencode:openrouter/openai/gpt-oss-120b:free"
-max_turns    = 10
+model        = "opencode:opencode/big-pickle"
+max_turns    = 15
 timeout_s    = 600
 
 # ── Personas ───────────────────────────────────────────────────────────────────
@@ -192,5 +192,56 @@ model             = "opencode:opencode/big-pickle"
 [[projects.task_sources]]
 type                 = "proactive-improvement"
 max_open_suggestions = 1
+permitted_actions    = ["comment_on_issue", "open_pr"]
+model                = "opencode:opencode/nemotron-3-super-free"
+
+[[projects]]
+name    = "birdbird"
+repo    = "rssrn/birdbird"
+cron    = "30 */3 * * *"
+context = "Birdbird RSS reader project."
+
+# (1) Dependabot security — highest priority
+[[projects.task_sources]]
+type = "gh-author"
+
+[[projects.task_sources.author_rules]]
+actor                     = "dependabot[bot]"
+done_label                = "ai-maintainer-done"
+persona                   = "maintainer"
+requires_dependabot_alert = true
+permitted_actions         = ["comment_on_pr"]
+model                     = "opencode:opencode/big-pickle"
+
+# (2) Dev label
+[[projects.task_sources]]
+type = "gh-label"
+
+[[projects.task_sources.label_rules]]
+rule  = "dev"
+model = "opencode:opencode/big-pickle"
+
+# (3) Analyst label
+[[projects.task_sources]]
+type = "gh-label"
+
+[[projects.task_sources.label_rules]]
+rule = "analyst"
+
+# (4) Dependabot routine bumps — only when nothing above is waiting
+[[projects.task_sources]]
+type = "gh-author"
+
+[[projects.task_sources.author_rules]]
+actor             = "dependabot[bot]"
+done_label        = "ai-maintainer-done"
+persona           = "maintainer"
+permitted_actions = ["comment_on_pr"]
+model             = "opencode:opencode/big-pickle"
+
+# (5) Proactive improvement — fallback when nothing labelled
+[[projects.task_sources]]
+type                 = "proactive-improvement"
+max_open_suggestions = 3
 permitted_actions    = ["comment_on_issue", "open_pr"]
 model                = "opencode:opencode/nemotron-3-super-free"
