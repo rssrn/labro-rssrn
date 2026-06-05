@@ -47,6 +47,7 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
         run: |
           {
             printf 'LABRO_CONFIG=/data/labro.toml\n'
@@ -58,6 +59,7 @@ jobs:
             [ -n "$R2_ACCESS_KEY_ID" ]        && printf 'R2_ACCESS_KEY_ID=%s\n'        "$R2_ACCESS_KEY_ID"
             [ -n "$R2_SECRET_ACCESS_KEY" ]    && printf 'R2_SECRET_ACCESS_KEY=%s\n'    "$R2_SECRET_ACCESS_KEY"
             [ -n "$R2_ACCOUNT_ID" ]           && printf 'R2_ACCOUNT_ID=%s\n'           "$R2_ACCOUNT_ID"
+            [ -n "$R2_BUCKET" ]               && printf 'R2_BUCKET=%s\n'               "$R2_BUCKET"
           } > /tmp/labro.env
           chmod 600 /tmp/labro.env
 
