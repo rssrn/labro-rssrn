@@ -17,6 +17,9 @@ github_app_name = "labro-bot"
 enabled = true
 cron    = "17 * * * *"
 
+[signals]
+enabled = true
+cron    = "0 7,18 * * *"
 
 [digest]
 enabled = false
@@ -158,7 +161,7 @@ model             = "opencode:opencode/big-pickle"
 type                 = "proactive-improvement"
 max_open_suggestions = 3
 permitted_actions    = ["comment_on_issue", "open_pr"]
-model                = "opencode:opencode/nemotron-3-super-free"
+model                = "opencode:opencode/nemotron-3-ultra-free"
 
 [[projects]]
 name = "newschart"
