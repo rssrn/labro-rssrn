@@ -161,7 +161,7 @@ model             = "opencode:opencode/big-pickle"
 type                 = "proactive-improvement"
 max_open_suggestions = 3
 permitted_actions    = ["comment_on_issue", "open_pr"]
-model                = "opencode:opencode/nemotron-3-ultra-free"
+model                = "opencode:opencode/deepseek-v4-flash-free"
 
 [[projects]]
 name = "newschart"
@@ -196,7 +196,7 @@ model             = "opencode:opencode/big-pickle"
 type                 = "proactive-improvement"
 max_open_suggestions = 1
 permitted_actions    = ["comment_on_issue", "open_pr"]
-model                = "opencode:opencode/nemotron-3-super-free"
+model                = "opencode:opencode/deepseek-v4-flash-free"
 
 [[projects]]
 name    = "birdbird"
@@ -247,4 +247,4 @@ model             = "opencode:opencode/big-pickle"
 type                 = "proactive-improvement"
 max_open_suggestions = 3
 permitted_actions    = ["comment_on_issue", "open_pr"]
-model                = "opencode:opencode/nemotron-3-super-free"
+model                = "opencode:opencode/deepseek-v4-flash-free"
