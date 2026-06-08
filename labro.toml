@@ -16,6 +16,7 @@ github_app_name = "labro-bot"
 [dashboard]
 enabled = true
 cron    = "17 * * * *"
+title   = "Labro Dashboard for rssrn Projects"
 
 [signals]
 enabled = true
