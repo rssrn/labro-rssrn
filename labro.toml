@@ -137,7 +137,7 @@ type = "gh-label"
 
 [[projects.task_sources.label_rules]]
 rule  = "dev"
-model = "opencode:opencode/big-pickle"
+model = ["opencode:opencode/no-such-model","opencode:opencode/big-pickle"]
 
 # (3) Analyst label
 [[projects.task_sources]]
