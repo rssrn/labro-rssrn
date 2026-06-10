@@ -157,13 +157,6 @@ persona           = "maintainer"
 permitted_actions = ["comment_on_pr"]
 model             = "opencode:opencode/big-pickle"
 
-# (5) Proactive improvement — fallback when nothing labelled
-[[projects.task_sources]]
-type                 = "proactive-improvement"
-max_open_suggestions = 3
-permitted_actions    = ["comment_on_issue", "open_pr"]
-model                = "opencode:opencode/deepseek-v4-flash-free"
-
 [[projects]]
 name = "newschart"
 repo = "rssrn/newschart"
@@ -191,13 +184,6 @@ done_label        = "ai-maintainer-done"
 persona           = "maintainer"
 permitted_actions = ["comment_on_pr"]
 model             = "opencode:opencode/big-pickle"
-
-# (3) Proactive improvements — fires when nothing else is waiting
-[[projects.task_sources]]
-type                 = "proactive-improvement"
-max_open_suggestions = 1
-permitted_actions    = ["comment_on_issue", "open_pr"]
-model                = "opencode:opencode/deepseek-v4-flash-free"
 
 [[projects]]
 name    = "birdbird"
@@ -243,9 +229,39 @@ persona           = "maintainer"
 permitted_actions = ["comment_on_pr"]
 model             = "opencode:opencode/big-pickle"
 
-# (5) Proactive improvement — fallback when nothing labelled
+# ── Proactive-only projects (weekly cadence) ───────────────────────────────────
+
+[[projects]]
+name    = "labro-proactive"
+repo    = "rssrn/labro"
+cron    = "0 6 * * 1"
+context = "This is the Labro harness repo itself. Be conservative — prefer comments over opening PRs unless the fix is straightforward."
+
 [[projects.task_sources]]
 type                 = "proactive-improvement"
-max_open_suggestions = 3
+max_open_suggestions = 1
+permitted_actions    = ["comment_on_issue", "open_pr"]
+model                = "opencode:opencode/deepseek-v4-flash-free"
+
+[[projects]]
+name = "newschart-proactive"
+repo = "rssrn/newschart"
+cron = "0 6 * * 3"
+
+[[projects.task_sources]]
+type                 = "proactive-improvement"
+max_open_suggestions = 1
+permitted_actions    = ["comment_on_issue", "open_pr"]
+model                = "opencode:opencode/deepseek-v4-flash-free"
+
+[[projects]]
+name    = "birdbird-proactive"
+repo    = "rssrn/birdbird"
+cron    = "0 6 * * 5"
+context = "Birdbird RSS reader project."
+
+[[projects.task_sources]]
+type                 = "proactive-improvement"
+max_open_suggestions = 1
 permitted_actions    = ["comment_on_issue", "open_pr"]
 model                = "opencode:opencode/deepseek-v4-flash-free"
