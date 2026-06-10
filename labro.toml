@@ -174,7 +174,22 @@ requires_dependabot_alert = true
 permitted_actions         = ["comment_on_pr"]
 model                     = "opencode:opencode/big-pickle"
 
-# (2) Dependabot routine bumps — only when no security PRs are waiting
+# (2) Dev label
+[[projects.task_sources]]
+type = "gh-label"
+
+[[projects.task_sources.label_rules]]
+rule  = "dev"
+model = "opencode:opencode/big-pickle"
+
+# (3) Analyst label
+[[projects.task_sources]]
+type = "gh-label"
+
+[[projects.task_sources.label_rules]]
+rule = "analyst"
+
+# (4) Dependabot routine bumps — only when nothing above is waiting
 [[projects.task_sources]]
 type = "gh-author"
 
