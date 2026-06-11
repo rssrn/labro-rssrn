@@ -256,7 +256,7 @@ context = "This is the Labro harness repo itself. Be conservative — prefer com
 type                 = "proactive-improvement"
 max_open_suggestions = 1
 permitted_actions    = ["comment_on_issue", "open_pr"]
-model                = "opencode:opencode/deepseek-v4-flash-free"
+model                = ["codex", "opencode:opencode/deepseek-v4-flash-free"]
 
 [[projects]]
 name = "newschart-proactive"
@@ -267,7 +267,7 @@ cron = "0 6 * * 3"
 type                 = "proactive-improvement"
 max_open_suggestions = 1
 permitted_actions    = ["comment_on_issue", "open_pr"]
-model                = "opencode:opencode/deepseek-v4-flash-free"
+model                = ["codex", "opencode:opencode/deepseek-v4-flash-free"]
 
 [[projects]]
 name    = "birdbird-proactive"
@@ -279,4 +279,4 @@ context = "Birdbird RSS reader project."
 type                 = "proactive-improvement"
 max_open_suggestions = 1
 permitted_actions    = ["comment_on_issue", "open_pr"]
-model                = "opencode:opencode/deepseek-v4-flash-free"
+model                = ["codex", "opencode:opencode/deepseek-v4-flash-free"]
