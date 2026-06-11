@@ -15,7 +15,7 @@ github_app_name = "labro-bot"
 
 [dashboard]
 enabled = true
-cron    = "17 * * * *"
+cron    = "57 * * * *"
 title   = "Labro Dashboard for rssrn Projects"
 
 [signals]
@@ -116,7 +116,7 @@ permitted_actions = ["comment_on_issue"]
 [[projects]]
 name    = "labro"
 repo    = "rssrn/labro"
-cron    = "0 */3 * * *"
+cron    = "15 */3 * * *"
 context = "This is the Labro harness repo itself. Be conservative — prefer comments over opening PRs unless the fix is straightforward."
 
 # (1) Dependabot security — highest priority
@@ -160,7 +160,7 @@ model             = "opencode:opencode/big-pickle"
 [[projects]]
 name = "newschart"
 repo = "rssrn/newschart"
-cron = "0 1 * * *"
+cron = "45 */3 * * *"
 
 # (1) Dependabot security PRs — highest priority
 [[projects.task_sources]]
@@ -203,7 +203,7 @@ model             = "opencode:opencode/big-pickle"
 [[projects]]
 name    = "birdbird"
 repo    = "rssrn/birdbird"
-cron    = "30 */3 * * *"
+cron    = "20 */3 * * *"
 context = "Birdbird RSS reader project."
 
 # (1) Dependabot security — highest priority
