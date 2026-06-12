@@ -14,6 +14,8 @@
 #   CODEX_AUTH_JSON_BASE64         — for codex agent via CLI subscription billing
 #                                    (base64 -w 0 ~/.codex/auth.json)
 #                                    bind-mounted so headless token refresh persists
+#   R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY / R2_ACCOUNT_ID / R2_BUCKET
+#                                  — required when dashboard.enabled = true in labro.toml
 on:
   workflow_dispatch:
 
@@ -33,6 +35,10 @@ jobs:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           CODEX_API_KEY: ${{ secrets.CODEX_API_KEY }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
         run: |
           {
             printf 'LABRO_CONFIG=/data/labro.toml\n'
@@ -41,6 +47,10 @@ jobs:
             [ -n "$CLAUDE_CODE_OAUTH_TOKEN" ] && printf 'CLAUDE_CODE_OAUTH_TOKEN=%s\n' "$CLAUDE_CODE_OAUTH_TOKEN"
             [ -n "$OPENROUTER_API_KEY" ]      && printf 'OPENROUTER_API_KEY=%s\n'      "$OPENROUTER_API_KEY"
             [ -n "$CODEX_API_KEY" ]           && printf 'CODEX_API_KEY=%s\n'           "$CODEX_API_KEY"
+            [ -n "$R2_ACCESS_KEY_ID" ]        && printf 'R2_ACCESS_KEY_ID=%s\n'        "$R2_ACCESS_KEY_ID"
+            [ -n "$R2_SECRET_ACCESS_KEY" ]    && printf 'R2_SECRET_ACCESS_KEY=%s\n'    "$R2_SECRET_ACCESS_KEY"
+            [ -n "$R2_ACCOUNT_ID" ]           && printf 'R2_ACCOUNT_ID=%s\n'           "$R2_ACCOUNT_ID"
+            [ -n "$R2_BUCKET" ]               && printf 'R2_BUCKET=%s\n'               "$R2_BUCKET"
           } > /tmp/labro.env
           chmod 600 /tmp/labro.env
 
@@ -61,6 +71,8 @@ jobs:
 
       - name: Copy env file to host
         run: |
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            ${{ secrets.DEPLOY_HOST }} 'mkdir -p /opt/labro/data'
           scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
             /tmp/labro.env ${{ secrets.DEPLOY_HOST }}:/opt/labro/.env
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
@@ -69,22 +81,30 @@ jobs:
       - name: Recreate container
         run: |
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-            ${{ secrets.DEPLOY_HOST }} '
+            ${{ secrets.DEPLOY_HOST }} << 'ENDSSH'
+            set -euo pipefail
             IMAGE="ghcr.io/rssrn/labro:latest"
-            if [ "$(docker inspect -f "{{.State.Running}}" labro 2>/dev/null || echo "false")" = "true" ]; then
+
+            if [ "$(docker inspect -f '{{.State.Running}}' labro 2>/dev/null || echo 'false')" = "true" ]; then
+              echo "Draining in-flight runs..."
               docker exec labro touch /data/LABRO_DISABLED 2>/dev/null || true
               while [ "$(docker exec labro sqlite3 /data/labro.db \
-                  "SELECT COUNT(*) FROM project_locks" 2>/dev/null || echo 0)" != "0" ]; do
-                echo "waiting for in-flight runs..."; sleep 5
+                  'SELECT COUNT(*) FROM project_locks' 2>/dev/null || echo 0)" != "0" ]; do
+                echo "waiting..."; sleep 5
               done
             fi
+
+            echo "Replacing container..."
             docker stop labro 2>/dev/null || true
             docker rm labro 2>/dev/null || true
             rm -f /opt/labro/data/LABRO_DISABLED
+
             docker run -d \
               --name labro \
               --restart unless-stopped \
               --env-file /opt/labro/.env \
               -v /opt/labro/data:/data \
               "$IMAGE"
-          '
+
+            echo "Done. labro is running $IMAGE"
+          ENDSSH
