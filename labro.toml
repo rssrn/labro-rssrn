@@ -100,12 +100,14 @@ Do not implement changes.
 # ── Shared rules ───────────────────────────────────────────────────────────────
 
 [shared_rules.dev]
+description       = "🛠️  Developer"
 label             = "ai-dev"
 done_label        = "ai-dev-done"
 persona           = "senior-developer"
 permitted_actions = ["comment_on_issue", "open_pr"]
 
 [shared_rules.analyst]
+description       = "🔍 Analyst"
 label             = "ai-analyst"
 done_label        = "ai-analyst-done"
 persona           = "analyst"
@@ -125,6 +127,7 @@ type = "gh-author"
 
 [[projects.task_sources.author_rules]]
 actor                     = "dependabot[bot]"
+description               = "🛡️  Dependabot Review"
 done_label                = "ai-maintainer-done"
 persona                   = "maintainer"
 requires_dependabot_alert = true
@@ -152,6 +155,7 @@ type = "gh-author"
 
 [[projects.task_sources.author_rules]]
 actor             = "dependabot[bot]"
+description       = "📦 Dependabot Review"
 done_label        = "ai-maintainer-done"
 persona           = "maintainer"
 permitted_actions = ["comment_on_pr"]
@@ -168,6 +172,7 @@ type = "gh-author"
 
 [[projects.task_sources.author_rules]]
 actor                     = "dependabot[bot]"
+description               = "🛡️  Dependabot Review"
 done_label                = "ai-maintainer-done"
 persona                   = "maintainer"
 requires_dependabot_alert = true
@@ -195,6 +200,7 @@ type = "gh-author"
 
 [[projects.task_sources.author_rules]]
 actor             = "dependabot[bot]"
+description       = "📦 Dependabot Review"
 done_label        = "ai-maintainer-done"
 persona           = "maintainer"
 permitted_actions = ["comment_on_pr"]
@@ -212,6 +218,7 @@ type = "gh-author"
 
 [[projects.task_sources.author_rules]]
 actor                     = "dependabot[bot]"
+description               = "🛡️  Dependabot Review"
 done_label                = "ai-maintainer-done"
 persona                   = "maintainer"
 requires_dependabot_alert = true
@@ -239,6 +246,7 @@ type = "gh-author"
 
 [[projects.task_sources.author_rules]]
 actor             = "dependabot[bot]"
+description       = "📦 Dependabot Review"
 done_label        = "ai-maintainer-done"
 persona           = "maintainer"
 permitted_actions = ["comment_on_pr"]
