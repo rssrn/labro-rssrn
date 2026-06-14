@@ -100,7 +100,7 @@ Do not implement changes.
 # ── Shared rules ───────────────────────────────────────────────────────────────
 
 [shared_rules.dev]
-description       = "🛠️  Developer"
+description       = "🛠️ Developer"
 label             = "ai-dev"
 done_label        = "ai-dev-done"
 persona           = "senior-developer"
@@ -127,7 +127,7 @@ type = "gh-author"
 
 [[projects.task_sources.author_rules]]
 actor                     = "dependabot[bot]"
-description               = "🛡️  Dependabot Review"
+description               = "🛡️ Dependabot Review"
 done_label                = "ai-maintainer-done"
 persona                   = "maintainer"
 requires_dependabot_alert = true
@@ -172,7 +172,7 @@ type = "gh-author"
 
 [[projects.task_sources.author_rules]]
 actor                     = "dependabot[bot]"
-description               = "🛡️  Dependabot Review"
+description               = "🛡️ Dependabot Review"
 done_label                = "ai-maintainer-done"
 persona                   = "maintainer"
 requires_dependabot_alert = true
@@ -218,7 +218,7 @@ type = "gh-author"
 
 [[projects.task_sources.author_rules]]
 actor                     = "dependabot[bot]"
-description               = "🛡️  Dependabot Review"
+description               = "🛡️ Dependabot Review"
 done_label                = "ai-maintainer-done"
 persona                   = "maintainer"
 requires_dependabot_alert = true
