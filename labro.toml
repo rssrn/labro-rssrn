@@ -117,6 +117,7 @@ permitted_actions = ["comment_on_issue"]
 
 [[projects]]
 name    = "labro"
+name_short = "🐠"
 repo    = "rssrn/labro"
 cron    = "15 */3 * * *"
 context = "This is the Labro harness repo itself. Be conservative — prefer comments over opening PRs unless the fix is straightforward."
@@ -163,6 +164,7 @@ model             = "opencode:opencode/big-pickle"
 
 [[projects]]
 name = "newschart"
+name_short = "🗞"
 repo = "rssrn/newschart"
 cron = "45 */3 * * *"
 
@@ -208,6 +210,7 @@ model             = "opencode:opencode/big-pickle"
 
 [[projects]]
 name    = "birdbird"
+name_short = "🐦"
 repo    = "rssrn/birdbird"
 cron    = "20 */3 * * *"
 context = "Birdbird RSS reader project."
