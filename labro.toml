@@ -259,6 +259,7 @@ model             = "opencode:opencode/big-pickle"
 
 [[projects]]
 name    = "labro-proactive"
+name_short = "🐠➕"
 repo    = "rssrn/labro"
 cron    = "0 6 * * 1"
 context = "This is the Labro harness repo itself. Be conservative — prefer comments over opening PRs unless the fix is straightforward."
@@ -271,6 +272,7 @@ model                = ["codex", "opencode:opencode/deepseek-v4-flash-free"]
 
 [[projects]]
 name = "newschart-proactive"
+name_short = "🗞➕"
 repo = "rssrn/newschart"
 cron = "0 6 * * 3"
 
@@ -282,9 +284,9 @@ model                = ["codex", "opencode:opencode/deepseek-v4-flash-free"]
 
 [[projects]]
 name    = "birdbird-proactive"
+name_short = "🐦➕"
 repo    = "rssrn/birdbird"
 cron    = "0 6 * * 5"
-context = "Birdbird RSS reader project."
 
 [[projects.task_sources]]
 type                 = "proactive-improvement"
