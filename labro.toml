@@ -40,6 +40,26 @@ post a comment asking questions. In your comment, namecheck an appropriate
 person or people from the issue history.
 """
 
+[personas.first-responder]
+prompt = """
+Act as a security-first responder. Your job is to triage and fix Dependabot
+security alerts that could not be auto-remediated.
+
+Read the issue body for the full alert details (package, severity, GHSA/CVE,
+vulnerable range, patched version). Then:
+
+1. **Investigate** — determine the current version pinned in the project and why
+   Dependabot could not create a fix PR (conflicting transitive dependency,
+   restrictive version constraint, etc.).
+2. **Fix** — update the dependency to the earliest patched version that resolves
+   the conflict, or apply a targeted override. Verify the fix compiles and tests
+   pass.
+3. **Submit** — open a PR with the fix and link the issue.  Always leave a
+   comment on the issue summarising what you did and why.  If you could not
+   raise a PR (e.g. no patched version exists, the conflict is unresolvable),
+   explain why in the comment so a human maintainer can take over.
+"""
+
 [personas.maintainer]
 prompt = """
 Act as a careful project maintainer reviewing a dependency upgrade pull request
@@ -139,7 +159,13 @@ repo    = "rssrn/labro"
 cron    = "15 */3 * * *"
 context = "This is the Labro harness repo itself. Be conservative — prefer comments over opening PRs unless the fix is straightforward."
 
-# (1) Dependabot security — highest priority
+# (1) Alerts with no auto-fix PR — highest priority
+[[projects.task_sources]]
+type              = "gh-dependabot-alert"
+persona           = "first-responder"
+permitted_actions = ["comment_on_issue", "open_pr"]
+
+# (2) Dependabot security PRs
 [[projects.task_sources]]
 type = "gh-author"
 
@@ -152,7 +178,7 @@ requires_dependabot_alert = true
 permitted_actions         = ["comment_on_pr"]
 model                     = "opencode:opencode/big-pickle"
 
-# (2) Dev label
+# (3) Dev label
 [[projects.task_sources]]
 type = "gh-label"
 
@@ -160,14 +186,14 @@ type = "gh-label"
 rule  = "dev"
 model = ["opencode:opencode/no-such-model","opencode:opencode/big-pickle"]
 
-# (3) Analyst label
+# (4) Analyst label
 [[projects.task_sources]]
 type = "gh-label"
 
 [[projects.task_sources.label_rules]]
 rule = "analyst"
 
-# (4) Dependabot routine bumps — only when nothing above is waiting
+# (5) Dependabot routine bumps — only when nothing above is waiting
 [[projects.task_sources]]
 type = "gh-author"
 
@@ -185,7 +211,13 @@ name_short = "🗞"
 repo = "rssrn/newschart"
 cron = "45 */3 * * *"
 
-# (1) Dependabot security PRs — highest priority
+# (1) Alerts with no auto-fix PR — highest priority
+[[projects.task_sources]]
+type              = "gh-dependabot-alert"
+persona           = "first-responder"
+permitted_actions = ["comment_on_issue", "open_pr"]
+
+# (2) Dependabot security PRs
 [[projects.task_sources]]
 type = "gh-author"
 
@@ -198,7 +230,7 @@ requires_dependabot_alert = true
 permitted_actions         = ["comment_on_pr"]
 model                     = "opencode:opencode/big-pickle"
 
-# (2) Dev label
+# (3) Dev label
 [[projects.task_sources]]
 type = "gh-label"
 
@@ -206,14 +238,14 @@ type = "gh-label"
 rule  = "dev"
 model = "opencode:opencode/big-pickle"
 
-# (3) Analyst label
+# (4) Analyst label
 [[projects.task_sources]]
 type = "gh-label"
 
 [[projects.task_sources.label_rules]]
 rule = "analyst"
 
-# (4) Dependabot routine bumps — only when nothing above is waiting
+# (5) Dependabot routine bumps — only when nothing above is waiting
 [[projects.task_sources]]
 type = "gh-author"
 
@@ -232,7 +264,13 @@ repo    = "rssrn/birdbird"
 cron    = "20 */3 * * *"
 context = "Birdbird RSS reader project."
 
-# (1) Dependabot security — highest priority
+# (1) Alerts with no auto-fix PR — highest priority
+[[projects.task_sources]]
+type              = "gh-dependabot-alert"
+persona           = "first-responder"
+permitted_actions = ["comment_on_issue", "open_pr"]
+
+# (2) Dependabot security PRs
 [[projects.task_sources]]
 type = "gh-author"
 
@@ -245,7 +283,7 @@ requires_dependabot_alert = true
 permitted_actions         = ["comment_on_pr"]
 model                     = "opencode:opencode/big-pickle"
 
-# (2) Dev label
+# (3) Dev label
 [[projects.task_sources]]
 type = "gh-label"
 
@@ -253,14 +291,14 @@ type = "gh-label"
 rule  = "dev"
 model = "opencode:opencode/big-pickle"
 
-# (3) Analyst label
+# (4) Analyst label
 [[projects.task_sources]]
 type = "gh-label"
 
 [[projects.task_sources.label_rules]]
 rule = "analyst"
 
-# (4) Dependabot routine bumps — only when nothing above is waiting
+# (5) Dependabot routine bumps — only when nothing above is waiting
 [[projects.task_sources]]
 type = "gh-author"
 
