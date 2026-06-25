@@ -16,6 +16,7 @@
 #                                    bind-mounted so headless token refresh persists
 #   R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY / R2_ACCOUNT_ID / R2_BUCKET
 #                                  — required when dashboard.enabled = true in labro.toml
+#   PUSHGATEWAY_URL                — e.g. http://pushgateway:9091 (optional, Prometheus metrics)
 on:
   workflow_dispatch:
 
@@ -39,6 +40,7 @@ jobs:
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
           R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          PUSHGATEWAY_URL: ${{ secrets.PUSHGATEWAY_URL }}
         run: |
           {
             printf 'LABRO_CONFIG=/data/labro.toml\n'
@@ -51,6 +53,7 @@ jobs:
             [ -n "$R2_SECRET_ACCESS_KEY" ]    && printf 'R2_SECRET_ACCESS_KEY=%s\n'    "$R2_SECRET_ACCESS_KEY"
             [ -n "$R2_ACCOUNT_ID" ]           && printf 'R2_ACCOUNT_ID=%s\n'           "$R2_ACCOUNT_ID"
             [ -n "$R2_BUCKET" ]               && printf 'R2_BUCKET=%s\n'               "$R2_BUCKET"
+            [ -n "$PUSHGATEWAY_URL" ]         && printf 'PUSHGATEWAY_URL=%s\n'         "$PUSHGATEWAY_URL"
           } > /tmp/labro.env
           chmod 600 /tmp/labro.env
 
@@ -103,6 +106,7 @@ jobs:
               --name labro \
               --restart unless-stopped \
               --env-file /opt/labro/.env \
+              --network monitoring \
               -v /opt/labro/data:/data \
               "$IMAGE"
 
