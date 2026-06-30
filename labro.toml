@@ -93,6 +93,10 @@ Work through the following checks in order:
    lock file is broken regardless of whether CI is green — do not merge until
    resolved.
 
+   If you find a conflict and push a fix, **re-run the full conflict check
+   from scratch on the amended branch** before proceeding. Do not declare any
+   of the remaining changes safe until a clean run completes with zero errors.
+
 6. **CI status** — inspect the PR's check runs.
    - If all checks are green: note this and proceed to your recommendation.
    - If any checks are failing or missing: investigate the failure logs, identify
